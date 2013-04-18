@@ -1,8 +1,8 @@
 <?php
 
-Yii::import('ext.coffeescript.components.parsers.CoffeeParser');
+Yii::import('ext.coffeescript.CoffeeParser');
 
-class CoffeeScriptExpression
+class CoffeeScriptExpression extends CJavaScriptExpression
 {
     /**
      * @var string the javascript expression wrapped by this object
@@ -20,16 +20,14 @@ class CoffeeScriptExpression
         if(strpos($code, 'coffee:')===0)
             $code=substr($code,7);
         $options['header'] = false;
+        $options['bare'] = true;
+        $options['filename'] = 'CoffeeScriptExpression';
         $parser = new CoffeeParser($options);
-        $this->code = $parser->compile($code);
-    }
-
-    /**
-     * String magic method
-     * @return string the javascript expression wrapped by this object
-     */
-    public function __toString()
-    {
-        return preg_replace('/\r?\n/', ' ', $this->code);
+        $js = $parser->compile($code);
+        // remove tail ';'
+        $js = preg_replace('/;\s*$/s', '', $js);
+        // remove lf
+        // $js = preg_replace('/\r?\n\s*/s', ' ', $js);
+        $this->code = $js;
     }
 }
