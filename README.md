@@ -3,9 +3,12 @@ yii-coffeescript
 
 INSTALL
 ----
+
 1. clone this repository to protected/extension/coffeescript directory.
 1. git submodule update --init lib/coffeescript-php
-1. Your application config, set assetManager component:
+1. Your application config, set assetManager component
+
+ex:
 
     'components'=>array(
         'assetManager' => array(
@@ -19,7 +22,7 @@ INSTALL
                 ),
             ),
         ),
-    ),
+     ),
 
 USAGE
 ----
