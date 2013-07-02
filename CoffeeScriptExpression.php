@@ -19,15 +19,37 @@ class CoffeeScriptExpression extends CJavaScriptExpression
             throw new CException('Value passed to CoffeeScriptExpression should be a string.');
         if(strpos($code, 'coffee:')===0)
             $code=substr($code,7);
-        $options['header'] = false;
-        $options['bare'] = true;
-        $options['filename'] = 'CoffeeScriptExpression';
-        $parser = new CoffeeParser($options);
-        $js = $parser->compile($code);
-        // remove tail ';'
-        $js = preg_replace('/;\s*$/s', '', $js);
-        // remove lf
-        // $js = preg_replace('/\r?\n\s*/s', ' ', $js);
+        $cache = self::getCache();
+        $js = $cache->get($code);
+        if ($js === false) {
+            $options['header'] = false;
+            $options['bare'] = true;
+            $options['filename'] = 'CoffeeScriptExpression';
+            $parser = new CoffeeParser($options);
+            $js = $parser->compile($code);
+            // remove tail ';'
+            $js = preg_replace('/;\s*$/s', '', $js);
+            // remove lf
+            // $js = preg_replace('/\r?\n\s*/s', ' ', $js);
+            $cache->set($code, $js);
+        }
         $this->code = $js;
+    }
+
+    /**
+     * get singleton cache
+     */
+    static public function getCache()
+    {
+        static $cache = null;
+        if ($cache === null) {
+            $cache = new CFileCache;
+            $cache->cacheFileSuffix = '-coffee.js';
+            $cache->hashKey = true;
+            $cache->keyPrefix = 'coffee-';
+            $cache->serializer = false;
+            $cache->init();
+        }
+        return $cache;
     }
 }
