@@ -8,7 +8,7 @@
  * @subpackage  Yii
  */
 
-Yii:setPathOfAlias('CoffeeScript', Yii::getPathOfAlias('ext.coffeescript.lib.coffeescript-php.src.CoffeeScript'));
+Yii::setPathOfAlias('CoffeeScript', Yii::getPathOfAlias('ext.coffeescript.lib.coffeescript-php.src.CoffeeScript'));
 CoffeeScript\Init::load();
 
 class CoffeeParser {
