@@ -97,7 +97,11 @@ class PBMAssetManager extends CAssetManager {
 	 * @return string an absolute URL to the published asset
 	 * @throws CException if the asset to be published does not exist.
 	 */
-	public function publish($path,$hashByName=false,$level=-1) {
+	public function publish($path,$hashByName=false,$level=-1,$forceCopy=null) {
+		if($forceCopy===null)
+			$forceCopy=$this->forceCopy;
+		if($forceCopy && $this->linkAssets)
+			throw new CException(Yii::t('yii','The "forceCopy" and "linkAssets" cannot be both true.'));
 		if(isset($this->_published[$path])) {
 			return $this->_published[$path];
 		}
@@ -136,7 +140,7 @@ class PBMAssetManager extends CAssetManager {
 				$dir=$this->hash($hashByName ? basename($src) : $src);
 				$dstDir=$this->getBasePath().DIRECTORY_SEPARATOR.$dir;
 
-				if(!is_dir($dstDir)) {
+				if(!is_dir($dstDir) || $forceCopy) {
 					CFileHelper::copyDirectory($src,$dstDir,array('exclude'=>array('.svn'),'level'=>$level));
 				}
 
